@@ -404,7 +404,7 @@ html.views{scroll-behavior:auto}
 
     <button class="pg next" type="button" id="wallOpen" hidden>إضافة مشاركة</button>
     <form class="wform" id="wallForm" hidden novalidate>
-      <h3>أضيفي مشاركتك</h3>
+      <h3>أضف مشاركتك</h3>
       <div class="row">
         <label for="wName">الاسم
           <input id="wName" type="text" maxlength="60" autocomplete="off" required>
@@ -418,7 +418,7 @@ html.views{scroll-behavior:auto}
         </label>
       </div>
       <label for="wText">كلمتك للوطن
-        <textarea id="wText" rows="4" maxlength="400" placeholder="شاركينا كلمتك في حب الوطن والدفاع عنه…" required></textarea>
+        <textarea id="wText" rows="4" maxlength="400" placeholder="شاركنا كلمتك في حب الوطن والدفاع عنه…" required></textarea>
       </label>
       <button class="cta" type="submit" id="wSend">إرسال المشاركة</button>
       <p class="wmsg" id="wMsg" role="status" aria-live="polite"></p>
@@ -562,82 +562,102 @@ document.documentElement.classList.add("views");
 window.addEventListener("hashchange", show);
 show();
 
-/* ---------- حائط المشاركات: يُحفظ في ملف data/wall.json ضمن الموقع ---------- */
+/* ---------- حائط المشاركات: مفتوح للجميع عبر نموذج Google ----------
+   الإعداد (مرة واحدة):
+   1) أنشئي نموذج Google فيه 3 أسئلة بالترتيب: «الاسم» (إجابة قصيرة)، «الصفة» (اختيار من متعدد: معلمة / مديرة الروضة / ولي أمر)، «الكلمة» (فقرة).
+   2) من «الردود» اربطي النموذج بجدول Google، ثم شاركي الجدول: «أي شخص لديه الرابط» = عارض.
+   3) ضعي القيم أدناه:
+      FORM_ID  : الرمز الطويل في رابط النموذج المنشور  .../forms/d/e/【FORM_ID】/viewform
+      ENTRIES  : رموز الأسئلة entry.XXXX (من «الحصول على رابط معبأ مسبقًا»)
+      SHEET_ID : الرمز في رابط الجدول  .../spreadsheets/d/【SHEET_ID】/edit
+   4) للمراجعة قبل النشر: اجعلي REVIEW = true، وأضيفي في الجدول عمودًا خامسًا (E) اكتبي فيه «نعم» أمام كل مشاركة توافقين عليها.
+   الحذف: احذفي الصف من الجدول. */
+const WALL = {
+  FORM_ID: "",
+  ENTRIES: {name: "", role: "", text: ""},
+  SHEET_ID: "",
+  REVIEW: false
+};
 (() => {
   const feed = document.getElementById("wallFeed"), form = document.getElementById("wallForm"), openBtn = document.getElementById("wallOpen");
   const msg = document.getElementById("wMsg"), send = document.getElementById("wSend");
   const ROLE = {teacher:"معلمة", principal:"مديرة الروضة", parent:"ولي أمر"};
-  let wall = null, filter = "all", canWrite = false, busy = false, artifact = null;
-  const cap = n => (window.claude && window.claude.use) ? window.claude.use(n).catch(() => null) : Promise.resolve(null);
+  const ROLE_BACK = Object.fromEntries(Object.entries(ROLE).map(([k, v]) => [v, k]));
+  const ready = !!(WALL.FORM_ID && WALL.SHEET_ID && WALL.ENTRIES.name && WALL.ENTRIES.role && WALL.ENTRIES.text);
+  let wall = null, filter = "all", busy = false, mine = [];
   const say = (t, cls) => { msg.textContent = t; msg.className = "wmsg" + (cls ? " " + cls : ""); };
+
+  form.hidden = false; openBtn.hidden = true;
 
   function render() {
     if (wall === null) { feed.innerHTML = '<p class="wempty">تعذّر تحميل الحائط. حدّثي الصفحة وحاولي مرة أخرى.</p>'; return; }
-    const list = wall.filter(e => filter === "all" || e.role === filter).slice().reverse();
-    if (!list.length) { feed.innerHTML = `<p class="wempty">${wall.length ? "لا توجد مشاركات في هذا القسم بعد." : "لا توجد مشاركات بعد. كوني أول من يشارك."}</p>`; return; }
+    const all = wall.concat(mine.filter(m => !wall.some(w => w.name === m.name && w.text === m.text)));
+    const list = all.filter(e => filter === "all" || e.role === filter).slice().reverse();
+    if (!list.length) { feed.innerHTML = `<p class="wempty">${all.length ? "لا توجد مشاركات في هذا القسم بعد." : "لا توجد مشاركات بعد. كن أول من يشارك."}</p>`; return; }
     feed.innerHTML = list.map(e => `<article class="wcard" data-role="${esc(e.role)}">
       <p class="t">${esc(e.text)}</p>
-      <div class="who"><b>${esc(e.name)}</b><span class="badge">${ROLE[e.role] || ""}</span>${canWrite ? `<button class="del" type="button" data-id="${esc(e.id)}">حذف</button>` : ""}</div>
+      <div class="who"><b>${esc(e.name)}</b><span class="badge">${ROLE[e.role] || ""}</span></div>
     </article>`).join("");
   }
-  async function save(next) {
-    if (!artifact) artifact = await cap("artifact");
-    if (!artifact) throw {code: "not_granted"};
-    await artifact.publish({"data/wall.json": JSON.stringify(next)});
+
+  /* قراءة CSV بسيطة تدعم الاقتباس والأسطر المتعددة */
+  function csv(t) {
+    const rows = []; let row = [], cell = "", q = false;
+    for (let i = 0; i < t.length; i++) {
+      const c = t[i];
+      if (q) { if (c === '"') { if (t[i + 1] === '"') { cell += '"'; i++; } else q = false; } else cell += c; }
+      else if (c === '"') q = true;
+      else if (c === ",") { row.push(cell); cell = ""; }
+      else if (c === "\n" || c === "\r") { if (c === "\r" && t[i + 1] === "\n") i++; row.push(cell); rows.push(row); row = []; cell = ""; }
+      else cell += c;
+    }
+    if (cell || row.length) { row.push(cell); rows.push(row); }
+    return rows;
   }
-  function explain(err) {
-    const c = err && err.code;
-    if (c === "conflict") return "حُدّث الحائط من جهاز آخر. حدّثي الصفحة ثم أعيدي الإرسال.";
-    if (c === "not_writer" || c === "not_granted" || c === "not_declared") return "إضافة المشاركات متاحة لصاحبة الموقع ومن تمنحهم صلاحية التعديل فقط.";
-    if (c === "capability_disabled" || c === "capability_removed") return "الإضافة من الصفحة غير متاحة في هذا العرض (مثلًا عند مشاركة الموقع للعامة).";
-    if (c === "rate_limited") return "محاولات كثيرة متتالية. انتظري قليلًا ثم أعيدي الإرسال.";
-    return "تعذّر الحفظ الآن. حاولي مرة أخرى بعد قليل.";
+
+  async function load() {
+    let base = [];
+    try { const r = await fetch("data/wall.json", {cache: "no-store"}); if (r.ok) { const d = await r.json(); if (Array.isArray(d)) base = d; } } catch (_) {}
+    if (!ready) { wall = base; render(); return; }
+    try {
+      const r = await fetch(`https://docs.google.com/spreadsheets/d/${WALL.SHEET_ID}/gviz/tq?tqx=out:csv&t=${Date.now()}`);
+      if (!r.ok) throw 0;
+      const rows = csv(await r.text()).slice(1);
+      const fromSheet = rows.filter(c => c[1] && c[3] && (!WALL.REVIEW || (c[4] || "").trim() === "نعم"))
+        .map(c => ({name: c[1].trim(), role: ROLE_BACK[(c[2] || "").trim()] || "parent", text: c[3].trim()}));
+      wall = base.concat(fromSheet);
+      mine = mine.filter(m => !wall.some(w => w.name === m.name && w.text === m.text));
+    } catch (_) { wall = wall || (base.length ? base : null); }
+    render();
   }
 
   document.querySelectorAll(".wchip").forEach(ch => ch.addEventListener("click", () => {
     document.querySelectorAll(".wchip").forEach(c => c.setAttribute("aria-pressed", String(c === ch)));
     filter = ch.dataset.role; render();
   }));
-  openBtn.addEventListener("click", () => { form.hidden = false; openBtn.hidden = true; document.getElementById("wName").focus(); });
 
   form.addEventListener("submit", async ev => {
     ev.preventDefault();
     if (busy) return;
     const name = document.getElementById("wName").value.trim(), role = document.getElementById("wRole").value, text = document.getElementById("wText").value.trim();
-    if (wall === null) { say("تعذّر تحميل الحائط، حدّثي الصفحة أولًا.", "err"); return; }
-    if (!name || !text) { say("اكتبي الاسم والكلمة قبل الإرسال.", "err"); return; }
+    if (!name || !text) { say("اكتب الاسم والكلمة قبل الإرسال.", "err"); return; }
+    if (!ready) { say("لم يُربط الحائط بنموذج المشاركات بعد. تواصل مع معلمة الروضة.", "err"); return; }
     busy = true; send.disabled = true; say("جاري الإرسال…");
-    const entry = {id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), name, role, text, t: Date.now()};
-    const next = wall.concat(entry).slice(-300);
+    const fd = new URLSearchParams();
+    fd.append("entry." + WALL.ENTRIES.name.replace(/^entry\./, ""), name);
+    fd.append("entry." + WALL.ENTRIES.role.replace(/^entry\./, ""), ROLE[role]);
+    fd.append("entry." + WALL.ENTRIES.text.replace(/^entry\./, ""), text);
     try {
-      await save(next);
-      wall = next; canWrite = true;
+      await fetch(`https://docs.google.com/forms/d/e/${WALL.FORM_ID}/formResponse`, {method: "POST", mode: "no-cors", body: fd});
       document.getElementById("wText").value = ""; document.getElementById("wName").value = "";
-      say("تمت إضافة المشاركة إلى الحائط.", "ok"); render();
-    } catch (err) { say(explain(err), "err"); }
+      if (WALL.REVIEW) say("شكرًا لك! وصلت مشاركتك، وستظهر على الحائط بعد مراجعتها.", "ok");
+      else { mine.push({name, role, text}); say("شكرًا لك! أُضيفت مشاركتك إلى الحائط.", "ok"); render(); setTimeout(load, 4000); }
+    } catch (_) { say("تعذّر الإرسال الآن. تأكد من الاتصال بالإنترنت وحاول مرة أخرى.", "err"); }
     busy = false; send.disabled = false;
   });
 
-  feed.addEventListener("click", async ev => {
-    const b = ev.target.closest(".del");
-    if (!b || busy) return;
-    if (b.dataset.sure !== "1") { b.dataset.sure = "1"; b.textContent = "تأكيد الحذف؟"; return; }
-    busy = true; b.disabled = true;
-    const next = wall.filter(e => e.id !== b.dataset.id);
-    try { await save(next); wall = next; say("حُذفت المشاركة.", "ok"); } catch (err) { say(explain(err), "err"); form.hidden = false; openBtn.hidden = true; }
-    busy = false; render();
-  });
-
-  fetch("data/wall.json", {cache: "no-store"}).then(r => r.ok ? r.json() : Promise.reject()).then(d => { wall = Array.isArray(d) ? d : []; render(); }).catch(() => { wall = null; render(); });
-
-  /* النموذج يظهر مباشرة لمن يملك صلاحية التعديل، ولغيره يبقى زر صغير */
-  cap("user").then(async u => {
-    let ok = false;
-    try { ok = !!(u && await u.canEdit()); } catch (_) {}
-    canWrite = ok;
-    if (ok) form.hidden = false; else openBtn.hidden = false;
-    render();
-  });
+  load();
+  setInterval(() => { if (!document.hidden) load(); }, 60000);
 })();
 
 /* النشيد: يبدأ بعد اكتمال البصمة، وزر عائم للتشغيل والإيقاف. يختفي الزر إن لم يوجد ملف nasheed.mp3 */
