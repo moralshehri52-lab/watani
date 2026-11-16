@@ -657,7 +657,14 @@ show();
       document.addEventListener("pointerup", once, true);
     });
   });
-  document.getElementById("fp").addEventListener("pointerup", () => { if (wanted && a.paused) start(); });
+  /* يبدأ النشيد مع أول لمسة للبصمة، ويتوقف إن رُفع الإصبع قبل اكتمال الإطار */
+  const fp = document.getElementById("fp"), gate = document.getElementById("gate");
+  const press = () => { wanted = true; start(); };
+  const release = () => { if (!gate.classList.contains("open")) { wanted = false; a.pause(); try { a.currentTime = 0; } catch (_) {} } else if (wanted && a.paused) start(); };
+  fp.addEventListener("pointerdown", press);
+  fp.addEventListener("touchstart", press, {passive: true});
+  fp.addEventListener("keydown", e => { if ((e.key === " " || e.key === "Enter") && !e.repeat) press(); });
+  ["pointerup", "pointercancel", "keyup"].forEach(ev => fp.addEventListener(ev, () => setTimeout(release, 0)));
   document.addEventListener("play", ev => { if (ev.target !== a && ev.target.tagName === "VIDEO") wanted = false; }, true);
 })();
 
