@@ -260,6 +260,10 @@ html.views{scroll-behavior:auto}
 .wcard .who b{color:var(--ink)}
 .wcard .del{margin-inline-start:auto;font:inherit;font-size:.8rem;background:none;border:0;color:#b3261e;cursor:pointer;padding:2px 6px}
 .wempty{grid-column:1/-1;text-align:center;color:var(--ink-soft);padding:30px 10px;background:var(--green-soft);border-radius:var(--radius)}
+.snd{position:fixed;bottom:16px;inset-inline-start:16px;z-index:30;display:inline-flex;align-items:center;gap:8px;font:inherit;font-weight:700;font-size:.85rem;color:#fff;background:linear-gradient(90deg,#3587b5,#3fae6a);border:0;border-radius:999px;padding:9px 16px;cursor:pointer;box-shadow:0 8px 20px rgba(47,138,168,.35)}
+.snd[hidden]{display:none}
+.snd svg{width:18px;height:18px}
+.snd.on{background:var(--green-deep)}
 @media (prefers-reduced-motion:reduce){
   html.views [data-view].active{animation:none}
   .gate{transition:none}
@@ -449,6 +453,12 @@ html.views{scroll-behavior:auto}
   </div>
 </footer>
 
+<audio id="nasheed" src="nasheed.mp3" loop preload="metadata"></audio>
+<button class="snd" id="nasheedBtn" type="button" hidden aria-pressed="false" aria-label="تشغيل النشيد أو إيقافه">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg>
+  <span id="nasheedTxt">تشغيل النشيد</span>
+</button>
+
 <dialog id="viewer" aria-labelledby="viewerTitle">
   <div class="stage" id="stage"></div>
   <div class="bar"><h3 id="viewerTitle"></h3><button type="button" id="closeViewer">إغلاق</button></div>
@@ -541,7 +551,7 @@ function show() {
     a.classList.toggle("on", on);
     if (on) { a.setAttribute("aria-current", "page"); a.scrollIntoView({block:"nearest", inline:"center"}); } else a.removeAttribute("aria-current");
   });
-  pauseAll(null);
+  pauseAll(document.getElementById("nasheed"));
   window.scrollTo(0, 0);
 }
 document.documentElement.classList.add("views");
@@ -624,6 +634,27 @@ show();
     if (ok) form.hidden = false; else openBtn.hidden = false;
     render();
   });
+})();
+
+/* النشيد: يبدأ بعد اكتمال البصمة، وزر عائم للتشغيل والإيقاف. يختفي الزر إن لم يوجد ملف nasheed.mp3 */
+(() => {
+  const a = document.getElementById("nasheed"), b = document.getElementById("nasheedBtn"), t = document.getElementById("nasheedTxt");
+  let wanted = false;
+  const sync = () => { const on = !a.paused; b.setAttribute("aria-pressed", String(on)); b.classList.toggle("on", on); t.textContent = on ? "إيقاف النشيد" : "تشغيل النشيد"; };
+  const start = () => a.play().catch(() => {});
+  a.addEventListener("loadedmetadata", () => { b.hidden = false; });
+  a.addEventListener("error", () => { b.hidden = true; });
+  a.addEventListener("play", sync); a.addEventListener("pause", sync);
+  b.addEventListener("click", () => { wanted = a.paused; if (a.paused) start(); else a.pause(); });
+  document.addEventListener("gate-open", () => {
+    wanted = true;
+    a.play().catch(() => {
+      const once = () => { document.removeEventListener("pointerup", once, true); if (wanted && a.paused) start(); };
+      document.addEventListener("pointerup", once, true);
+    });
+  });
+  document.getElementById("fp").addEventListener("pointerup", () => { if (wanted && a.paused) start(); });
+  document.addEventListener("play", ev => { if (ev.target !== a && ev.target.tagName === "VIDEO") wanted = false; }, true);
 })();
 
 /* بوابة البصمة: ضغط مستمر حتى يكتمل الإطار */
