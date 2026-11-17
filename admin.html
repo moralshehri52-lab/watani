@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>لوحة الإشراف · وطني خط أحمر</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@500;700;800&family=Readex+Pro:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--green-deep:#0f3d2e;--green:#1f8f5a;--green-soft:#eaf6f2;--ink:#0f2a1d;--ink-soft:#4a6356;--red:#e3263a;--blue:#3587b5;--amber:#c48a1a;--radius:20px;
+  --display:"Alexandria","Readex Pro",sans-serif;--body:"Readex Pro","Segoe UI",Tahoma,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--body);color:var(--ink);line-height:1.8;background:radial-gradient(60% 40% at 100% 0%,rgba(63,174,106,.12),transparent 70%),#f4f9f7;min-height:100vh}
+h1,h2,h3{font-family:var(--display);margin:0;line-height:1.4}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+.top{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid #dcebe4;padding:12px clamp(14px,4vw,32px);display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.top h1{font-size:1.15rem;color:var(--green-deep);flex:1;min-width:180px}
+.top h1 small{display:block;font-family:var(--body);font-size:.78rem;font-weight:400;color:var(--ink-soft)}
+.top .bar{width:44px;height:4px;border-radius:4px;background:var(--red)}
+.btn{border:0;border-radius:999px;padding:8px 20px;font-weight:700;min-height:42px;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn.primary{background:linear-gradient(90deg,#1f8f5a,#3fae6a);color:#fff;box-shadow:0 8px 18px rgba(31,143,90,.28)}
+.btn.ghost{background:#fff;color:var(--green-deep);border:1.5px solid #cfe6e0}
+.btn.danger{background:#fff;color:#b3261e;border:1.5px solid #f2c4c9}
+.btn.warn{background:#fff6e5;color:#8a5a00;border:1.5px solid #f0d9a0}
+.btn[disabled]{opacity:.55;cursor:default}
+main{max-width:1100px;margin:0 auto;padding:22px clamp(14px,4vw,32px) 60px}
+.login{max-width:420px;margin:8vh auto 0;background:#fff;border-radius:24px;padding:28px 24px;box-shadow:0 20px 50px rgba(10,77,46,.14);border-top:6px solid #3fae6a;display:flex;flex-direction:column;gap:14px}
+.login h2{text-align:center;color:var(--green-deep)}
+.login p.sub{text-align:center;color:var(--ink-soft);font-size:.9rem;margin:-6px 0 4px}
+label{display:flex;flex-direction:column;gap:6px;font-weight:700;color:var(--green-deep);font-size:.95rem}
+input{font:inherit;font-size:16px;padding:11px 14px;border-radius:14px;border:1.5px solid #cfe6e0;background:#f6fbf9;color:var(--ink)}
+.msg{min-height:1.5em;text-align:center;font-size:.9rem;color:var(--ink-soft)}
+.msg.err{color:#b3261e;font-weight:700}
+.msg.ok{color:var(--green);font-weight:700}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.tab{border:1.5px solid #cfe6e0;background:#fff;color:var(--green-deep);border-radius:999px;padding:6px 18px;font-weight:700;min-height:42px}
+.tab[aria-selected="true"]{background:var(--green-deep);border-color:var(--green-deep);color:#fff}
+.tab .n{display:inline-block;min-width:24px;margin-inline-start:6px;padding:0 7px;border-radius:999px;background:var(--red);color:#fff;font-size:.8rem;line-height:1.7}
+.tab[aria-selected="true"] .n{background:#fff;color:var(--green-deep)}
+.list{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;align-items:start}
+.item{background:#fff;border-radius:var(--radius);overflow:hidden;box-shadow:0 8px 24px rgba(10,77,46,.10);border-top:5px solid var(--rc,#3fae6a);display:flex;flex-direction:column}
+.item[data-role="child"]{--rc:#3fae6a}.item[data-role="parent"]{--rc:var(--blue)}.item[data-role="teacher"]{--rc:var(--green)}.item[data-role="principal"]{--rc:var(--green-deep)}.item[data-role="visitor"]{--rc:var(--amber)}
+.item .m{background:#0b1f17}
+.item .m img,.item .m video{display:block;width:100%;max-height:340px;object-fit:contain;background:#0b1f17}
+.item .m a{display:block}
+.item .t{padding:14px 16px 4px;font-family:var(--display);font-weight:700;color:var(--green-deep);white-space:pre-wrap;overflow-wrap:anywhere}
+.item .meta{padding:6px 16px;font-size:.82rem;color:var(--ink-soft);display:flex;flex-wrap:wrap;gap:4px 12px}
+.item .meta b{color:var(--ink);font-size:.95rem}
+.chip{display:inline-block;border-radius:999px;padding:0 10px;font-size:.75rem;font-weight:700;background:var(--green-soft);color:var(--green-deep)}
+.chip.c-ok{background:#e6f4ec;color:var(--green)}
+.chip.c-no{background:#fdecee;color:#b3261e}
+.acts{display:flex;flex-wrap:wrap;gap:8px;padding:10px 14px 14px;margin-top:auto}
+.acts .btn{flex:1;min-width:110px;padding:6px 12px}
+.empty{grid-column:1/-1;text-align:center;background:#fff;border-radius:var(--radius);padding:40px 16px;color:var(--ink-soft)}
+.empty b{display:block;font-family:var(--display);color:var(--green-deep);font-size:1.15rem}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--green-deep);color:#fff;border-radius:999px;padding:8px 20px;font-weight:700;box-shadow:0 10px 30px rgba(0,0,0,.25);z-index:20}
+.toast[hidden]{display:none}
+.setup{max-width:560px;margin:8vh auto 0;background:#fff8e6;border:1px solid #f0d9a0;border-radius:20px;padding:22px;color:#5c4a17}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<header class="top">
+  <span class="bar" aria-hidden="true"></span>
+  <h1>لوحة الإشراف · حائط حب الوطن<small>الروضة الملحقة بالابتدائية الثالثة والعشرون</small></h1>
+  <a class="btn ghost" href="./#wall">عرض الحائط</a>
+  <button class="btn ghost" id="logout" type="button" hidden>تسجيل الخروج</button>
+</header>
+
+<main>
+  <div class="setup" id="setup" hidden>
+    <h2>لم يُربط الموقع بقاعدة البيانات بعد</h2>
+    <p>أضيفي عنوان مشروع Supabase والمفتاح العام في ملف <code>config.js</code>، ثم حدّثي الصفحة. التفاصيل في ملف <code>SETUP.md</code>.</p>
+  </div>
+
+  <form class="login" id="login" hidden novalidate>
+    <h2>دخول المشرفة</h2>
+    <p class="sub">لمراجعة المشاركات واعتمادها قبل نشرها على الحائط</p>
+    <label for="email">البريد الإلكتروني<input id="email" type="email" autocomplete="username" dir="ltr" required></label>
+    <label for="password">كلمة المرور<input id="password" type="password" autocomplete="current-password" dir="ltr" required></label>
+    <button class="btn primary" type="submit" id="loginBtn">دخول</button>
+    <p class="msg" id="loginMsg" role="status" aria-live="polite"></p>
+  </form>
+
+  <section id="panel" hidden>
+    <div class="tabs" role="tablist" aria-label="حالة المشاركات">
+      <button class="tab" role="tab" type="button" data-status="pending" aria-selected="true">بانتظار المراجعة <span class="n" id="nPending">0</span></button>
+      <button class="tab" role="tab" type="button" data-status="approved" aria-selected="false">المنشورة</button>
+      <button class="tab" role="tab" type="button" data-status="rejected" aria-selected="false">المرفوضة</button>
+    </div>
+    <div class="list" id="list" aria-live="polite"></div>
+    <p style="text-align:center;margin-top:18px"><button class="btn ghost" id="more" type="button" hidden>عرض المزيد</button></p>
+  </section>
+</main>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script src="config.js"></script>
+<script src="api.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>

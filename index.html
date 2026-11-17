@@ -131,8 +131,8 @@ footer .privacy{flex-basis:100%;font-size:.8rem;color:#a9c9b6;border-top:1px sol
 dialog{border:0;border-radius:var(--radius);padding:0;max-width:min(92vw,900px);width:100%;background:#000;color:#fff}
 dialog::backdrop{background:rgba(3,24,15,.85)}
 dialog .stage img,dialog .stage video{display:block;width:100%;max-height:78vh;object-fit:contain;background:#000}
-dialog .bar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 16px;background:var(--green-deep)}
-dialog .bar h3{font-size:1.2rem}
+dialog .bar{width:auto;height:auto;margin:0;border-radius:0;box-shadow:none;animation:none;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 16px;background:var(--green-deep)}
+dialog .bar h3{font-size:1.1rem;color:#fff}
 dialog .bar button{font:inherit;cursor:pointer;background:var(--gold);color:#fff;border:0;border-radius:999px;padding:2px 18px}
 
 
@@ -219,8 +219,6 @@ h1,h2,h3{font-weight:800}
 .pledge{font-size:clamp(1rem,3.9vw,1.35rem);font-weight:700}
 .cta{font-size:1rem;font-weight:700}
 .card h3{font-size:1.1rem}
-.wform h3{font-size:1.25rem}
-.wcard p.t{font-size:1.05rem;font-weight:500;line-height:2}
 .closing blockquote{font-size:clamp(1.25rem,4.8vw,2rem);line-height:1.9;font-weight:800}
 footer strong{font-size:1.2rem !important}
 
@@ -238,29 +236,124 @@ html.views{scroll-behavior:auto}
 .word{margin:0;padding:26px 22px 8px;font-family:var(--display);font-weight:700;font-size:1.35rem;line-height:1.9;color:var(--green-deep);text-align:center}
 .view{min-height:60vh}
 
-/* ---------- wall ---------- */
-.wform{background:#fff;border-radius:var(--radius);box-shadow:0 10px 30px rgba(10,77,46,.12);padding:22px clamp(16px,4vw,28px);display:flex;flex-direction:column;gap:14px;margin:0 auto 26px;max-width:640px;border-top:5px solid #3fae6a}
-.wform[hidden],#wallOpen[hidden]{display:none}
-#wallOpen{display:block;margin:0 auto 22px;border:0;cursor:pointer;font-size:1rem}
-.wform h3{font-size:1.6rem;color:var(--green-deep);text-align:center}
-.wform .row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px}
-.wform label{display:flex;flex-direction:column;gap:6px;font-weight:700;font-size:.95rem;color:var(--green-deep)}
-.wform input,.wform select,.wform textarea{font:inherit;font-weight:400;color:var(--ink);background:#f6fbf9;border:1.5px solid #cfe6e0;border-radius:12px;padding:10px 14px;width:100%}
-.wform textarea{resize:vertical;line-height:1.8}
-.wform .cta{align-self:center;border:0;cursor:pointer;margin-top:4px}
-.wform .cta[disabled]{opacity:.6;cursor:default}
+/* ---------- wall (open community wall) ---------- */
+#wall{background:radial-gradient(70% 40% at 100% 0%,rgba(63,174,106,.10),transparent 70%),radial-gradient(60% 40% at 0% 30%,rgba(53,135,181,.08),transparent 70%),#fff}
+.share-btn{display:flex;align-items:center;justify-content:center;gap:12px;margin:0 auto;font:inherit;font-family:var(--display);font-weight:800;font-size:clamp(1.1rem,4.4vw,1.35rem);color:#fff;background:linear-gradient(90deg,#1f8f5a,#3fae6a);border:0;border-radius:999px;padding:14px clamp(26px,7vw,44px);cursor:pointer;box-shadow:0 14px 30px rgba(31,143,90,.35),inset 0 -3px 0 rgba(0,0,0,.12);transition:transform .2s,box-shadow .2s;position:relative}
+.share-btn:hover{transform:translateY(-2px);box-shadow:0 18px 34px rgba(31,143,90,.42)}
+.share-btn svg{width:26px;height:26px;flex:none}
+.share-btn::after{content:"";position:absolute;inset:-6px;border-radius:999px;border:2px solid rgba(63,174,106,.35);animation:pulse 2.4s ease-out infinite;pointer-events:none}
+@keyframes pulse{0%{opacity:.9;transform:scale(.98)}100%{opacity:0;transform:scale(1.12)}}
+.hero .share-btn{display:inline-flex;margin:14px auto 0;font-size:1rem;padding:10px 26px}
+.hero .share-btn::after{display:none}
+.consent-note{display:flex;gap:10px;align-items:flex-start;max-width:640px;margin:18px auto 0;background:#fff8e6;border:1px solid #f0d9a0;border-radius:16px;padding:12px 16px;font-size:.9rem;line-height:1.8;color:#5c4a17}
+.consent-note svg{width:22px;height:22px;flex:none;margin-top:3px;color:#b7791f}
+.wstats{text-align:center;margin:16px 0 0;color:var(--ink-soft);font-size:.9rem;min-height:1.6em}
+.wstats b{color:var(--green-deep);font-family:var(--display)}
+.wtools{display:flex;flex-direction:column;align-items:center;gap:10px;margin:22px 0 24px}
+.wtools .filters{margin:0}
+.sorter{display:inline-flex;background:var(--green-soft);border-radius:999px;padding:4px;gap:2px}
+.sorter button{font:inherit;font-size:.85rem;font-weight:500;border:0;background:transparent;color:var(--ink-soft);border-radius:999px;padding:4px 16px;cursor:pointer}
+.sorter button[aria-pressed="true"]{background:#fff;color:var(--green-deep);font-weight:700;box-shadow:0 2px 8px rgba(10,77,46,.12)}
+.wall{columns:3 290px;column-gap:18px}
+.post{break-inside:avoid;display:block;margin:0 0 18px;background:#fff;border-radius:var(--radius);overflow:hidden;box-shadow:0 10px 28px rgba(10,77,46,.11);border-top:5px solid var(--rc,#3fae6a);animation:postIn .5s ease both}
+@keyframes postIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.post[data-role="child"]{--rc:#3fae6a;--rs:#eaf6ef}
+.post[data-role="parent"]{--rc:#3587b5;--rs:#e8f2f8}
+.post[data-role="teacher"]{--rc:#1f8f5a;--rs:#e6f4ec}
+.post[data-role="principal"]{--rc:#0f3d2e;--rs:#e4ece8}
+.post[data-role="visitor"]{--rc:#c48a1a;--rs:#fbf3e3}
+.pmedia{display:block;width:100%;border:0;padding:0;margin:0;background:var(--rs);cursor:zoom-in;position:relative}
+.pmedia img{display:block;width:100%;height:auto;max-height:520px;object-fit:cover}
+.pmedia.drawing{background:#fff;padding:10px 10px 0}
+.pmedia.drawing img{border-radius:14px;border:1px solid #e3eee8;object-fit:contain;background:#fff}
+.pvideo{background:#000}
+.pvideo video{display:block;width:100%;max-height:560px;background:#000}
+.pmsg{position:relative;margin:0;padding:18px 20px 4px;font-family:var(--display);font-weight:700;font-size:1.12rem;line-height:1.95;color:var(--green-deep);white-space:pre-wrap;overflow-wrap:anywhere}
+.post.textonly .pmsg{padding:34px 22px 14px;font-size:clamp(1.2rem,4.4vw,1.45rem);text-align:center;background:linear-gradient(var(--rs),#fff)}
+.post.textonly .pmsg::before{content:"\201D";position:absolute;top:0;right:16px;font-size:3.2rem;line-height:1;color:var(--rc);opacity:.55}
+.pfoot{display:flex;align-items:center;gap:10px;padding:12px 16px 14px}
+.avatar{flex:none;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:var(--rs);color:var(--rc);font-family:var(--display);font-weight:800;font-size:1.05rem}
+.pwho{display:flex;flex-direction:column;min-width:0;line-height:1.5}
+.pwho b{font-size:.95rem;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pwho span{font-size:.75rem;color:var(--ink-soft)}
+.pwho .prole{color:var(--rc);font-weight:700}
+.like{margin-inline-start:auto;display:inline-flex;align-items:center;gap:6px;font:inherit;font-weight:700;font-size:.9rem;color:var(--ink-soft);background:#f4f8f6;border:1.5px solid #e1ece6;border-radius:999px;padding:5px 12px 5px 14px;cursor:pointer;transition:background .2s,color .2s,border-color .2s;min-height:40px}
+.like svg{width:20px;height:20px;transition:transform .2s}
+.like[aria-pressed="true"]{color:#e3263a;background:#fdeef0;border-color:#f6c5cc}
+.like[aria-pressed="true"] svg{fill:currentColor}
+.like.pop svg{animation:pop .4s ease}
+@keyframes pop{40%{transform:scale(1.4)}}
+.wempty{column-span:all;text-align:center;color:var(--ink-soft);padding:34px 14px;background:var(--green-soft);border-radius:var(--radius)}
+.wempty b{display:block;font-family:var(--display);color:var(--green-deep);font-size:1.15rem;margin-bottom:4px}
+#wallMore{display:block;margin:6px auto 0;cursor:pointer;font:inherit;font-weight:700}
+#wallMore[hidden]{display:none}
+.skel{break-inside:avoid;height:200px;margin:0 0 18px;border-radius:var(--radius);background:linear-gradient(90deg,#eef5f1 25%,#f7fbf9 50%,#eef5f1 75%);background-size:200% 100%;animation:shimmer 1.4s infinite}
+.skel:nth-child(2n){height:280px}
+@keyframes shimmer{to{background-position:-200% 0}}
+
+/* ---------- share dialog ---------- */
+dialog.sheet{background:#fff;color:var(--ink);max-width:620px;width:calc(100% - 24px);max-height:calc(100dvh - 24px);border-radius:26px;padding:0;overflow:auto;overscroll-behavior:contain;box-shadow:0 30px 80px rgba(3,24,15,.35)}
+dialog.sheet::backdrop{background:rgba(6,40,26,.6);backdrop-filter:blur(3px)}
+.sheet-head{position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:10px;padding:16px 20px;background:linear-gradient(90deg,#1f8f5a,#3fae6a);color:#fff}
+.sheet-head h3{font-size:1.3rem;flex:1}
+.sheet-head .x{font:inherit;font-size:1.6rem;line-height:1;width:40px;height:40px;border-radius:50%;border:0;background:rgba(255,255,255,.18);color:#fff;cursor:pointer}
+.sform{display:flex;flex-direction:column;gap:16px;padding:20px clamp(16px,4vw,26px) 24px}
+.sform[hidden],.sdone[hidden]{display:none}
+.fld{display:flex;flex-direction:column;gap:6px;font-weight:700;font-size:.95rem;color:var(--green-deep);border:0;margin:0;padding:0;min-width:0}
+.fld legend{padding:0;margin-bottom:6px}
+.fld small{font-weight:400;color:var(--ink-soft);font-size:.8rem}
+.sform input[type=text],.sform textarea{font:inherit;font-weight:400;font-size:16px;color:var(--ink);background:#f6fbf9;border:1.5px solid #cfe6e0;border-radius:14px;padding:11px 14px;width:100%}
+.sform input[type=text]:focus,.sform textarea:focus{outline:none;border-color:#3fae6a;box-shadow:0 0 0 4px rgba(63,174,106,.15)}
+.sform textarea{resize:vertical;line-height:1.8;min-height:110px}
+.count{align-self:flex-end;font-weight:400;font-size:.75rem;color:var(--ink-soft);margin-top:-2px}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opt{position:relative}
+.opt input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.opt span{display:inline-flex;align-items:center;gap:6px;min-height:42px;padding:6px 16px;border-radius:999px;border:1.5px solid #cfe6e0;background:#fff;font-weight:500;color:var(--ink);transition:all .15s}
+.opt input:checked+span{background:var(--green-deep);border-color:var(--green-deep);color:#fff;font-weight:700}
+.opt input:focus-visible+span{outline:3px solid var(--gold);outline-offset:2px}
+.opt svg{width:18px;height:18px}
+.pane{border:2px dashed #b9dccb;border-radius:18px;padding:14px;background:#fbfdfc;display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center}
+.pane[hidden]{display:none}
+.pick{display:inline-flex;align-items:center;gap:8px;font:inherit;font-weight:700;color:var(--green-deep);background:var(--green-soft);border:0;border-radius:999px;padding:9px 20px;cursor:pointer}
+.pick svg{width:20px;height:20px}
+.pane .hint{font-weight:400;font-size:.8rem;color:var(--ink-soft)}
+.preview{width:100%;display:flex;justify-content:center}
+.preview img,.preview video{max-width:100%;max-height:280px;border-radius:14px;background:#000}
+.preview img{background:#fff}
+.pad-wrap{width:100%}
+.pad{display:block;width:100%;aspect-ratio:4/3;background:#fff;border:1.5px solid #cfe6e0;border-radius:14px;touch-action:none;cursor:crosshair}
+.padbar{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:8px;margin-top:10px}
+.swatch{width:34px;height:34px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 1.5px #cfe6e0;cursor:pointer;padding:0}
+.swatch[aria-pressed="true"]{box-shadow:0 0 0 3px var(--green-deep)}
+.tool{font:inherit;font-size:.85rem;font-weight:500;border:1.5px solid #cfe6e0;background:#fff;border-radius:999px;padding:5px 12px;cursor:pointer;min-height:36px;color:var(--ink)}
+.tool[aria-pressed="true"]{background:var(--green-deep);border-color:var(--green-deep);color:#fff}
+.consent{flex-direction:row;align-items:flex-start;gap:10px;font-weight:500;font-size:.9rem;line-height:1.8;background:#fff8e6;border:1px solid #f0d9a0;border-radius:14px;padding:12px 14px;color:#5c4a17;cursor:pointer}
+.consent input{width:22px;height:22px;flex:none;margin-top:4px;accent-color:#1f8f5a}
+.consent[hidden]{display:none}
+.review-note{font-size:.85rem;color:var(--ink-soft);text-align:center;font-weight:400}
+.progress{height:10px;border-radius:10px;background:var(--green-soft);overflow:hidden}
+.progress[hidden]{display:none}
+.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,#3587b5,#3fae6a);transition:width .2s}
+.sform .cta{align-self:center;border:0;cursor:pointer;margin-top:0;font-size:1.1rem;padding:12px 40px}
+.sform .cta[disabled]{opacity:.6;cursor:default}
 .wmsg{text-align:center;font-size:.92rem;color:var(--ink-soft);min-height:1.4em}
-.wmsg.err{color:#b3261e}
+.wmsg.err{color:#b3261e;font-weight:700}
 .wmsg.ok{color:#1f8f5a;font-weight:700}
-.wall{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px;align-items:start}
-.wcard{background:#fff;border-radius:var(--radius);padding:20px 20px 16px;box-shadow:0 8px 24px rgba(10,77,46,.10);border-inline-start:5px solid #3fae6a;display:flex;flex-direction:column;gap:10px}
-.wcard[data-role="principal"]{border-inline-start-color:#3587b5}
-.wcard[data-role="parent"]{border-inline-start-color:#e3263a}
-.wcard p.t{font-family:var(--display);font-weight:700;font-size:1.3rem;line-height:1.9;color:var(--green-deep);white-space:pre-wrap;overflow-wrap:anywhere}
-.wcard .who{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:.9rem;color:var(--ink-soft)}
-.wcard .who b{color:var(--ink)}
-.wcard .del{margin-inline-start:auto;font:inherit;font-size:.8rem;background:none;border:0;color:#b3261e;cursor:pointer;padding:2px 6px}
-.wempty{grid-column:1/-1;text-align:center;color:var(--ink-soft);padding:30px 10px;background:var(--green-soft);border-radius:var(--radius)}
+.sdone{padding:34px 24px 30px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px}
+.sdone .ok-ic{width:84px;height:84px;border-radius:50%;display:grid;place-items:center;background:var(--green-soft);color:#1f8f5a}
+.sdone .ok-ic svg{width:46px;height:46px}
+.sdone h4{margin:0;font-family:var(--display);font-size:1.5rem;color:var(--green-deep)}
+.sdone p{color:var(--ink-soft);max-width:34ch}
+.sdone .row{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:6px}
+.sdone .cta,.sdone .pg{border:0;cursor:pointer;font:inherit;font-weight:700;margin:0}
+.hp{position:absolute!important;left:-9999px!important;width:1px;height:1px;opacity:0}
+.admin-link{color:#a9c9b6;font-size:.75rem;text-decoration:none;border-bottom:1px dotted #a9c9b6}
+@media (max-width:560px){
+  dialog.sheet{width:100%;max-width:100%;max-height:100dvh;height:100dvh;border-radius:0;margin:0}
+  .wall{columns:1}
+}
+@media (min-width:561px) and (max-width:900px){.wall{columns:2}}
 .snd{position:fixed;bottom:16px;inset-inline-start:16px;z-index:30;display:inline-flex;align-items:center;gap:8px;font:inherit;font-weight:700;font-size:.85rem;color:#fff;background:linear-gradient(90deg,#3587b5,#3fae6a);border:0;border-radius:999px;padding:9px 16px;cursor:pointer;box-shadow:0 8px 20px rgba(47,138,168,.35)}
 .snd[hidden]{display:none}
 .snd svg{width:18px;height:18px}
@@ -272,6 +365,7 @@ html.views{scroll-behavior:auto}
   .bar{animation:none}
   .card{transition:none}
   .card:hover{transform:none}
+  .post,.skel,.share-btn::after,.like.pop svg{animation:none}
 }
 </style>
 </head>
@@ -312,6 +406,7 @@ html.views{scroll-behavior:auto}
   <p class="welcome">بأصوات أطفالنا الصغار، نعبر عن حب وطننا وولائنا له</p>
   <a class="cta" href="#gallery">شاهد مشاركات أطفالنا
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></a>
+  <br><button class="share-btn" type="button" data-share><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-9.3-9.2C1.5 8 3.6 4.5 7.2 4.5c2 0 3.5 1.1 4.8 2.8 1.3-1.7 2.8-2.8 4.8-2.8 3.6 0 5.7 3.5 4.5 6.8-1.8 4.6-9.3 9.2-9.3 9.2z"/></svg>شاركنا حب الوطن</button>
 
   <div class="article">
     <span class="tag">المادة (34)</span>
@@ -398,39 +493,31 @@ html.views{scroll-behavior:auto}
   <div class="wrap">
     <div class="head">
       <span class="kicker">حائط وطني خط أحمر</span>
-      <h2>رسائلكم في حب الوطن</h2>
-      <p>مشاركات المعلمات والمديرة وأولياء الأمور، تظهر هنا فور إضافتها.</p>
+      <h2>حائط حب الوطن</h2>
+      <p>مساحة مفتوحة لأطفالنا وأولياء الأمور والمعلمات ومديرة الروضة ومجتمعنا المدرسي: عبارة، أو صورة، أو مقطع، أو رسمة في حب الوطن.</p>
     </div>
 
-    <button class="pg next" type="button" id="wallOpen" hidden>إضافة مشاركة</button>
-    <form class="wform" id="wallForm" hidden novalidate>
-      <h3>أضيفي مشاركتك</h3>
-      <div class="row">
-        <label for="wName">الاسم
-          <input id="wName" type="text" maxlength="60" autocomplete="off" required>
-        </label>
-        <label for="wRole">الصفة
-          <select id="wRole" required>
-            <option value="teacher">معلمة</option>
-            <option value="principal">مديرة الروضة</option>
-            <option value="parent">ولي أمر</option>
-          </select>
-        </label>
+    <button class="share-btn" type="button" data-share><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-9.3-9.2C1.5 8 3.6 4.5 7.2 4.5c2 0 3.5 1.1 4.8 2.8 1.3-1.7 2.8-2.8 4.8-2.8 3.6 0 5.7 3.5 4.5 6.8-1.8 4.6-9.3 9.2-9.3 9.2z"/></svg>شاركنا حب الوطن</button>
+    <p class="consent-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 4.6-3.4 8.2-8 9-4.6-.8-8-4.4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg><span><b>تنبيه:</b> لا تُنشر صور الأطفال أو مقاطعهم إلا بموافقة ولي الأمر. تُراجع إدارة الروضة كل مشاركة قبل ظهورها على الحائط.</span></p>
+    <p class="wstats" id="wallStats" aria-live="polite"></p>
+
+    <div class="wtools">
+      <div class="filters" role="group" aria-label="تصفية حسب صفة المشارك" id="wallFilters">
+        <button class="chip" type="button" data-role="all" aria-pressed="true">الكل</button>
+        <button class="chip" type="button" data-role="child" aria-pressed="false">الأطفال</button>
+        <button class="chip" type="button" data-role="parent" aria-pressed="false">أولياء الأمور</button>
+        <button class="chip" type="button" data-role="teacher" aria-pressed="false">المعلمات</button>
+        <button class="chip" type="button" data-role="principal" aria-pressed="false">المديرة</button>
+        <button class="chip" type="button" data-role="visitor" aria-pressed="false">الزوار</button>
       </div>
-      <label for="wText">كلمتك للوطن
-        <textarea id="wText" rows="4" maxlength="400" placeholder="شاركينا كلمتك في حب الوطن والدفاع عنه…" required></textarea>
-      </label>
-      <button class="cta" type="submit" id="wSend">إرسال المشاركة</button>
-      <p class="wmsg" id="wMsg" role="status" aria-live="polite"></p>
-    </form>
-
-    <div class="filters" role="group" aria-label="تصفية الحائط" id="wallFilters">
-      <button class="wchip chip" type="button" data-role="all" aria-pressed="true">الكل</button>
-      <button class="wchip chip" type="button" data-role="teacher" aria-pressed="false">المعلمات</button>
-      <button class="wchip chip" type="button" data-role="principal" aria-pressed="false">المديرة</button>
-      <button class="wchip chip" type="button" data-role="parent" aria-pressed="false">أولياء الأمور</button>
+      <div class="sorter" role="group" aria-label="ترتيب المشاركات" id="wallSort">
+        <button type="button" data-sort="new" aria-pressed="true">الأحدث</button>
+        <button type="button" data-sort="top" aria-pressed="false">الأكثر إعجابًا</button>
+      </div>
     </div>
-    <div class="wall" id="wallFeed" aria-live="polite"><p class="wempty">جاري التحميل…</p></div>
+
+    <div class="wall" id="wallFeed" aria-live="polite" aria-busy="true"><div class="skel"></div><div class="skel"></div><div class="skel"></div></div>
+    <button class="pg" type="button" id="wallMore" hidden>عرض المزيد</button>
     <div class="pager" data-pager></div>
   </div>
 </section>
@@ -450,7 +537,7 @@ html.views{scroll-behavior:auto}
       <div><dt>الروضة: </dt><dd id="schoolName">الروضة الملحقة بالابتدائية الثالثة والعشرون</dd></div>
       <div><dt>المعلمة: </dt><dd id="teacherName">مريم عبدالله علي الشهري</dd></div>
     </dl>
-    <p class="privacy">نحرص على خصوصية أطفالنا: لا تُعرض الأسماء الكاملة، ولا تُنشر المشاركات إلا بموافقة أولياء الأمور.</p>
+    <p class="privacy">نحرص على خصوصية أطفالنا: لا تُعرض الأسماء الكاملة، ولا تُنشر المشاركات إلا بموافقة أولياء الأمور وبعد مراجعة إدارة الروضة. <a class="admin-link" href="admin.html">دخول الإشراف</a></p>
   </div>
 </footer>
 
@@ -463,6 +550,100 @@ html.views{scroll-behavior:auto}
 <dialog id="viewer" aria-labelledby="viewerTitle">
   <div class="stage" id="stage"></div>
   <div class="bar"><h3 id="viewerTitle"></h3><button type="button" id="closeViewer">إغلاق</button></div>
+</dialog>
+
+<dialog class="sheet" id="shareDlg" aria-labelledby="shareTitle">
+  <div class="sheet-head"><h3 id="shareTitle">شاركنا حب الوطن</h3><button class="x" type="button" id="shareClose" aria-label="إغلاق">×</button></div>
+
+  <form class="sform" id="shareForm" novalidate>
+    <label class="fld" for="sName">اسم المشارك
+      <input type="text" id="sName" maxlength="60" autocomplete="off" required placeholder="مثال: ريم، أو أم محمد">
+      <small>للأطفال يكفي الاسم الأول، حفاظًا على خصوصيتهم.</small>
+    </label>
+
+    <fieldset class="fld">
+      <legend>الصفة</legend>
+      <div class="opts" id="sRoles">
+        <label class="opt"><input type="radio" name="role" value="child" checked><span>طفل / طفلة</span></label>
+        <label class="opt"><input type="radio" name="role" value="parent"><span>ولي أمر</span></label>
+        <label class="opt"><input type="radio" name="role" value="teacher"><span>معلمة</span></label>
+        <label class="opt"><input type="radio" name="role" value="principal"><span>مديرة</span></label>
+        <label class="opt"><input type="radio" name="role" value="visitor"><span>زائر</span></label>
+      </div>
+    </fieldset>
+
+    <label class="fld" for="sMsg">عبارة وطنية
+      <textarea id="sMsg" maxlength="500" rows="3" placeholder="اكتب عبارتك في حب الوطن…"></textarea>
+      <span class="count" id="sCount">0 / 500</span>
+    </label>
+
+    <fieldset class="fld">
+      <legend>أضف صورة أو فيديو أو رسمة <small>(اختياري)</small></legend>
+      <div class="opts" id="sKinds">
+        <label class="opt"><input type="radio" name="kind" value="none" checked><span>بدون</span></label>
+        <label class="opt"><input type="radio" name="kind" value="image"><span>صورة</span></label>
+        <label class="opt"><input type="radio" name="kind" value="video"><span>فيديو</span></label>
+        <label class="opt"><input type="radio" name="kind" value="drawing"><span>رسمة</span></label>
+      </div>
+    </fieldset>
+
+    <div class="pane" id="paneImage" hidden>
+      <input type="file" id="fImage" accept="image/*" hidden>
+      <button class="pick" type="button" data-pick="fImage"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5M4 16v3a1 1 0 001 1h14a1 1 0 001-1v-3"/></svg>اختر صورة</button>
+      <span class="hint">من معرض الصور أو الكاميرا</span>
+      <div class="preview" id="pvImage"></div>
+    </div>
+
+    <div class="pane" id="paneVideo" hidden>
+      <input type="file" id="fVideo" accept="video/mp4,video/quicktime,video/webm,video/*" hidden>
+      <button class="pick" type="button" data-pick="fVideo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5M4 16v3a1 1 0 001 1h14a1 1 0 001-1v-3"/></svg>اختر مقطع فيديو</button>
+      <span class="hint">مقطع قصير، بحد أقصى 50 ميجابايت (نحو دقيقة واحدة)</span>
+      <div class="preview" id="pvVideo"></div>
+    </div>
+
+    <div class="pane" id="paneDrawing" hidden>
+      <div class="pad-wrap">
+        <canvas class="pad" id="pad" width="1200" height="900" aria-label="لوحة الرسم: ارسم بإصبعك أو بالفأرة"></canvas>
+        <div class="padbar" id="padBar">
+          <button class="swatch" type="button" data-color="#1f8f5a" style="background:#1f8f5a" aria-label="أخضر" aria-pressed="true"></button>
+          <button class="swatch" type="button" data-color="#0f3d2e" style="background:#0f3d2e" aria-label="أخضر داكن" aria-pressed="false"></button>
+          <button class="swatch" type="button" data-color="#3587b5" style="background:#3587b5" aria-label="أزرق" aria-pressed="false"></button>
+          <button class="swatch" type="button" data-color="#e3263a" style="background:#e3263a" aria-label="أحمر" aria-pressed="false"></button>
+          <button class="swatch" type="button" data-color="#f2b705" style="background:#f2b705" aria-label="أصفر" aria-pressed="false"></button>
+          <button class="swatch" type="button" data-color="#8a5a2b" style="background:#8a5a2b" aria-label="بني" aria-pressed="false"></button>
+          <button class="swatch" type="button" data-color="#222222" style="background:#222" aria-label="أسود" aria-pressed="false"></button>
+          <button class="tool" type="button" data-size aria-pressed="false">قلم عريض</button>
+          <button class="tool" type="button" data-eraser aria-pressed="false">ممحاة</button>
+          <button class="tool" type="button" data-undo>تراجع</button>
+          <button class="tool" type="button" data-clear>مسح الكل</button>
+        </div>
+      </div>
+      <input type="file" id="fDrawing" accept="image/*" hidden>
+      <button class="pick" type="button" data-pick="fDrawing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5M4 16v3a1 1 0 001 1h14a1 1 0 001-1v-3"/></svg>أو ارفع صورة رسمة على الورق</button>
+      <div class="preview" id="pvDrawing"></div>
+    </div>
+
+    <label class="fld consent" id="sConsentBox" hidden>
+      <input type="checkbox" id="sConsent">
+      <span>أُقرّ بأنني ولي أمر الطفل الظاهر في الصورة أو المقطع، أو أن لديّ موافقة ولي أمره على نشرها في حائط المبادرة.</span>
+    </label>
+
+    <input class="hp" type="text" id="sHp" tabindex="-1" autocomplete="off" aria-hidden="true">
+    <p class="review-note">تظهر مشاركتك على الحائط بعد مراجعتها واعتمادها من إدارة الروضة.</p>
+    <div class="progress" id="sProg" hidden><i></i></div>
+    <button class="cta" type="submit" id="sSend">إرسال المشاركة</button>
+    <p class="wmsg" id="sMsgOut" role="status" aria-live="polite"></p>
+  </form>
+
+  <div class="sdone" id="shareDone" hidden>
+    <div class="ok-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+    <h4>وصلت مشاركتك، شكرًا لك!</h4>
+    <p>ستظهر على حائط حب الوطن بعد مراجعتها واعتمادها من إدارة الروضة.</p>
+    <div class="row">
+      <button class="cta" type="button" id="shareAgain">مشاركة أخرى</button>
+      <button class="pg" type="button" id="shareBack">العودة إلى الحائط</button>
+    </div>
+  </div>
 </dialog>
 
 <script>
@@ -562,84 +743,6 @@ document.documentElement.classList.add("views");
 window.addEventListener("hashchange", show);
 show();
 
-/* ---------- حائط المشاركات: يُحفظ في ملف data/wall.json ضمن الموقع ---------- */
-(() => {
-  const feed = document.getElementById("wallFeed"), form = document.getElementById("wallForm"), openBtn = document.getElementById("wallOpen");
-  const msg = document.getElementById("wMsg"), send = document.getElementById("wSend");
-  const ROLE = {teacher:"معلمة", principal:"مديرة الروضة", parent:"ولي أمر"};
-  let wall = null, filter = "all", canWrite = false, busy = false, artifact = null;
-  const cap = n => (window.claude && window.claude.use) ? window.claude.use(n).catch(() => null) : Promise.resolve(null);
-  const say = (t, cls) => { msg.textContent = t; msg.className = "wmsg" + (cls ? " " + cls : ""); };
-
-  function render() {
-    if (wall === null) { feed.innerHTML = '<p class="wempty">تعذّر تحميل الحائط. حدّثي الصفحة وحاولي مرة أخرى.</p>'; return; }
-    const list = wall.filter(e => filter === "all" || e.role === filter).slice().reverse();
-    if (!list.length) { feed.innerHTML = `<p class="wempty">${wall.length ? "لا توجد مشاركات في هذا القسم بعد." : "لا توجد مشاركات بعد. كوني أول من يشارك."}</p>`; return; }
-    feed.innerHTML = list.map(e => `<article class="wcard" data-role="${esc(e.role)}">
-      <p class="t">${esc(e.text)}</p>
-      <div class="who"><b>${esc(e.name)}</b><span class="badge">${ROLE[e.role] || ""}</span>${canWrite ? `<button class="del" type="button" data-id="${esc(e.id)}">حذف</button>` : ""}</div>
-    </article>`).join("");
-  }
-  async function save(next) {
-    if (!artifact) artifact = await cap("artifact");
-    if (!artifact) throw {code: "not_granted"};
-    await artifact.publish({"data/wall.json": JSON.stringify(next)});
-  }
-  function explain(err) {
-    const c = err && err.code;
-    if (c === "conflict") return "حُدّث الحائط من جهاز آخر. حدّثي الصفحة ثم أعيدي الإرسال.";
-    if (c === "not_writer" || c === "not_granted" || c === "not_declared") return "إضافة المشاركات متاحة لصاحبة الموقع ومن تمنحهم صلاحية التعديل فقط.";
-    if (c === "capability_disabled" || c === "capability_removed") return "الإضافة من الصفحة غير متاحة في هذا العرض (مثلًا عند مشاركة الموقع للعامة).";
-    if (c === "rate_limited") return "محاولات كثيرة متتالية. انتظري قليلًا ثم أعيدي الإرسال.";
-    return "تعذّر الحفظ الآن. حاولي مرة أخرى بعد قليل.";
-  }
-
-  document.querySelectorAll(".wchip").forEach(ch => ch.addEventListener("click", () => {
-    document.querySelectorAll(".wchip").forEach(c => c.setAttribute("aria-pressed", String(c === ch)));
-    filter = ch.dataset.role; render();
-  }));
-  openBtn.addEventListener("click", () => { form.hidden = false; openBtn.hidden = true; document.getElementById("wName").focus(); });
-
-  form.addEventListener("submit", async ev => {
-    ev.preventDefault();
-    if (busy) return;
-    const name = document.getElementById("wName").value.trim(), role = document.getElementById("wRole").value, text = document.getElementById("wText").value.trim();
-    if (wall === null) { say("تعذّر تحميل الحائط، حدّثي الصفحة أولًا.", "err"); return; }
-    if (!name || !text) { say("اكتبي الاسم والكلمة قبل الإرسال.", "err"); return; }
-    busy = true; send.disabled = true; say("جاري الإرسال…");
-    const entry = {id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), name, role, text, t: Date.now()};
-    const next = wall.concat(entry).slice(-300);
-    try {
-      await save(next);
-      wall = next; canWrite = true;
-      document.getElementById("wText").value = ""; document.getElementById("wName").value = "";
-      say("تمت إضافة المشاركة إلى الحائط.", "ok"); render();
-    } catch (err) { say(explain(err), "err"); }
-    busy = false; send.disabled = false;
-  });
-
-  feed.addEventListener("click", async ev => {
-    const b = ev.target.closest(".del");
-    if (!b || busy) return;
-    if (b.dataset.sure !== "1") { b.dataset.sure = "1"; b.textContent = "تأكيد الحذف؟"; return; }
-    busy = true; b.disabled = true;
-    const next = wall.filter(e => e.id !== b.dataset.id);
-    try { await save(next); wall = next; say("حُذفت المشاركة.", "ok"); } catch (err) { say(explain(err), "err"); form.hidden = false; openBtn.hidden = true; }
-    busy = false; render();
-  });
-
-  fetch("data/wall.json", {cache: "no-store"}).then(r => r.ok ? r.json() : Promise.reject()).then(d => { wall = Array.isArray(d) ? d : []; render(); }).catch(() => { wall = null; render(); });
-
-  /* النموذج يظهر مباشرة لمن يملك صلاحية التعديل، ولغيره يبقى زر صغير */
-  cap("user").then(async u => {
-    let ok = false;
-    try { ok = !!(u && await u.canEdit()); } catch (_) {}
-    canWrite = ok;
-    if (ok) form.hidden = false; else openBtn.hidden = false;
-    render();
-  });
-})();
-
 /* النشيد: يبدأ بعد اكتمال البصمة، وزر عائم للتشغيل والإيقاف. يختفي الزر إن لم يوجد ملف nasheed.mp3 */
 (() => {
   const a = document.getElementById("nasheed"), b = document.getElementById("nasheedBtn"), t = document.getElementById("nasheedTxt");
@@ -696,5 +799,8 @@ show();
   fp.addEventListener("keyup", e => { if (e.key === " " || e.key === "Enter") stop(); });
 })();
 </script>
+<script src="config.js"></script>
+<script src="api.js"></script>
+<script src="wall.js"></script>
 </body>
 </html>
